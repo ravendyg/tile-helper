@@ -11,7 +11,8 @@ module.exports =
 {
   entry:
   {
-    app: './client-src/app.js'
+    app: './client-src/app.js',
+    test: './client-src/test.js',
   },
   output:
   {
@@ -24,7 +25,7 @@ module.exports =
     extensions: ['', '.webpack.js', '.web.js', '.js', '.html'],
   },
   watch: dev,
-  devtool: dev ? 'source-map' : null,
+  devtool: dev ? null/*'source-map'*/ : null,
   module:
   {
     loaders:
