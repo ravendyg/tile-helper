@@ -51,18 +51,12 @@ function getPopupContent(latLng, zoom, osmTile, yaTile)
 {
   var osmLink = `http://c.tile.openstreetmap.org/${zoom}/${osmTile.x}/${osmTile.y}.png`;
   var yaLink, yaText, trafficLink, trafficText
-  if (zoom === 16)
-  {
-    yaLink = `https://vec04.maps.yandex.net/tiles?l=map&v=4.130.1&x=${yaTile.x}&y=${yaTile.y}&z=${zoom}&scale=1`;
-    yaText = `<a href="${yaLink}" target="_blank">${yaLink}</a>`;
-    trafficLink = `https://jgo.maps.yandex.net/1.1/tiles?trf&l=trf,trfe&lang=ru_RU&x=${yaTile.x}&y=${yaTile.y}&z=${zoom}&scale=1&tm=${unixNow()}`;
-    trafficText = `<a href="${trafficLink}" target="_blank">${trafficLink}</a>`;
-  }
-  else
-  {
-    yaText = '<span>incorrect zoom (should be 16)</span>';
-    trafficText = '<span>incorrect zoom (should be 16)</span>';
-  }
+
+  yaLink = `https://vec04.maps.yandex.net/tiles?l=map&v=4.130.1&x=${yaTile.x}&y=${yaTile.y}&z=${zoom}&scale=1`;
+  yaText = `<a href="${yaLink}" target="_blank">${yaLink}</a>`;
+  trafficLink = `https://jgo.maps.yandex.net/1.1/tiles?trf&l=trf,trfe&lang=ru_RU&x=${yaTile.x}&y=${yaTile.y}&z=${zoom}&scale=1&tm=${unixNow()}`;
+  trafficText = `<a href="${trafficLink}" target="_blank">${trafficLink}</a>`;
+
   var out =
   `<h5>Coordinates:</h5>
   <p>lat: ${latLng.lat}</p>
