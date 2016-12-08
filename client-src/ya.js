@@ -35,7 +35,7 @@ function xphi(tile, zoom)
   return Math.PI / 2 - 2 * Math.atan( 1 / Math.exp( mercatorY(tile, zoom) / Rn ) );
 }
 
-// export
+export
 function latitude(tile, zoom)
 {
   let xp = xphi(tile, zoom);
@@ -50,7 +50,7 @@ function latitude(tile, zoom)
   return out * 180 / Math.PI;
 }
 
-// export
+export
 function longitude(tile, zoom)
 {
   return mercatorX(tile, zoom) * 180 / Math.PI / Rn;

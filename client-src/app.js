@@ -3,9 +3,11 @@
 require('./app.less');
 
 import { getOsmTile } from './tile';
-import { findYaTile } from './ya';
+import { findYaTile, longitude, latitude } from './ya';
 
 import * as request from 'superagent';
+
+var tileSize = 256; // tile size in pixels
 
 // init map
 var southWest = L.latLng(30, 10),
@@ -94,6 +96,8 @@ function getPopupContent(latLng, zoom, osmTile, yaTile)
   ${jsonText}
   `;
 
+  fetchTraffic(jsonLink, yaTile, zoom);
+
   return out;
 }
 
@@ -102,17 +106,96 @@ function unixNow()
   return Math.round( Date.now() / 1000 );
 }
 
-// var stamp = 0;
+var stamp = 0;
 
-// function fetchTraffic(link)
-// {
-//   request
-//   .get(link)
-//   .end(
-//     (err, res) =>
-//     {
-//       console.log(err, res);
+function fetchTraffic(link, tile, zoom)
+{
+  request
+  .get(link)
+  .end(
+    (err, res) =>
+    {
+      var features;
+      var tLat = latitude(tile, zoom);  // top left corner
+      var tLng = longitude(tile, zoom);
+      var nextTile =
+      {
+        x: tile.x + 1,
+        y: tile.y + 1
+      };
+      var bLat = latitude(nextTile, zoom);  // bottom right corner
+      var bLng = longitude(nextTile, zoom);
 
-//     }
-//   );
-// }
+      var yCoef = (tLat - bLat) / tileSize;
+      var xCoef = (tLng - bLng) / tileSize;
+
+
+      try
+      {
+        var temp = JSON.parse(res.text).data.features;
+        features =
+          temp.map(
+            e =>
+            ({
+              coordinates: e.properties.HotspotMetaData.RenderedGeometry.coordinates,
+              speed: e.properties.description
+            })
+          );
+
+          var mk;
+          L.marker([tLat, tLng]).addTo(Map);
+          L.marker([bLat, bLng]).addTo(Map);
+
+
+        // console.log(
+        //   transformCoords(features[0].coordinates, yCoef, xCoef, tLat, tLng).map(e => e[0])
+        // );
+
+        var poly;
+        for (var i = 0; i < features.length; i++)
+        {
+          poly = L.polygon( transformCoords(features[i].coordinates, yCoef, xCoef, tLat, tLng).map(e => e[0]) );
+          (function(val){
+            poly.on(
+              'mouseover',
+              () =>
+              {
+                console.log(val);
+              }
+            );
+          })(features[i].speed);
+          poly.addTo(Map);
+        }
+
+
+      }
+      catch (err)
+      {
+        console.error(err);
+      }
+    }
+  );
+}
+
+function transformCoords(coords, yC, xC, tLat, tLng)
+{
+  var out = [];
+  var temp;
+
+  for (var item of coords)
+  {
+    if (Array.isArray(item) && Array.isArray(item[0]) )
+    {
+      out.push( transformCoords(item, yC, xC, tLat, tLng) )
+    }
+    else
+    {
+      temp = [];
+      temp.push( tLat - yC * item[1] );
+      temp.push( tLng - xC * item[0] );
+      out.push(temp);
+    }
+  }
+
+  return out;
+}
