@@ -1,7 +1,7 @@
 'use strict';
 
 import * as Bst from './bst';
-import { findTile } from './ya';
+import { findYaTile } from './ya';
 
 console.log('test online');
 

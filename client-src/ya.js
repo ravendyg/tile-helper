@@ -61,7 +61,7 @@ function longitude(tile, zoom)
  * find yandex tile numbers
  */
 export
-function findTile(lat, lng, zoom)
+function findYaTile({lat, lng}, zoom)
 {
   var x = Math.floor( (lng * Rn * Math.PI / 180 + b) / equator * worldSize(zoom) );
   var y;

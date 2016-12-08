@@ -2,7 +2,8 @@
 
 require('./app.less');
 
-import { getOsmTile, getYaTile } from './tile';
+import { getOsmTile } from './tile';
+import { findYaTile } from './ya';
 
 // init map
 var southWest = L.latLng(30, 10),
@@ -35,9 +36,7 @@ Map.on(
     var latLng = event.latlng;
     var zoom = Map.getZoom();
     var osmTile = getOsmTile(latLng, zoom);
-    var yaTile = getYaTile(latLng, zoom);
-
-    console.log( osmTile, yaTile );
+    var yaTile = findYaTile(latLng, zoom);
 
     popup =
       L.popup()
@@ -73,7 +72,7 @@ function getPopupContent(latLng, zoom, osmTile, yaTile)
   <a href="${osmLink}" target="_blank">${osmLink}</a>
   <h5>Yandex tile</h5>
   ${yaText}
-  <h5>OSM tile</h5>
+  <h5>Traffic tile</h5>
   ${trafficText}
   `;
 
