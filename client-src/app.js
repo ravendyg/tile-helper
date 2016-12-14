@@ -134,7 +134,9 @@ function fetchTraffic(link, tile, zoom)
       {
         var temp = JSON.parse(res.text).data.features;
         features =
-          temp.map(
+          // remove accidents
+          (temp.length > 0 && temp[0].type === 'FeatureCollection' && temp[0].features ? temp[0].features : temp)
+          .map(
             e =>
             ({
               coordinates: e.properties.HotspotMetaData.RenderedGeometry.coordinates,
