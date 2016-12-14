@@ -160,19 +160,22 @@ function fetchTraffic(link, tile, zoom)
         var poly;
         for (var i = 0; i < features.length; i++)
         {
-          poly = L.polygon( transformCoords(features[i].coordinates, yCoef, xCoef, tLat, tLng).map(e => e[0]),
-            {color: colors[colorIndex]} );
-          colorIndex = (++colorIndex) % colors.length;
-          (function(val){
-            poly.on(
-              'mouseover',
-              () =>
-              {
-                console.log(val);
-              }
-            );
-          })(features[i].id + ' ' + features[i].speed);
-          poly.addTo(Map);
+          for (var frame of features[i].coordinates)
+          {
+            poly = L.polygon( transformCoords([frame], yCoef, xCoef, tLat, tLng).map(e => e[0]),
+              {color: colors[colorIndex]} );
+            colorIndex = (++colorIndex) % colors.length;
+            (function(val, frame){
+              poly.on(
+                'mouseover',
+                () =>
+                {
+                  console.log(val, frame);
+                }
+              );
+            })(features[i].id + ' ' + features[i].speed, frame[0]);
+            poly.addTo(Map);
+          }
         }
 
 

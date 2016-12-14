@@ -23,6 +23,7 @@
       {
         end: Point,
         feature?: Feature,      // if missing - couldn't find corresponding feature in Yandex data
+        averageSpeed?: int,     // speed calculated based on Yandex data (not stored permanently)
         defaultSpeed: int,
         dist: float             // km
         stopId?: int            // stop that is situated at the end of the segment (can be rounded for small segments)
