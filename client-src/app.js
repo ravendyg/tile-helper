@@ -9,6 +9,9 @@ import * as request from 'superagent';
 
 var tileSize = 256; // tile size in pixels
 
+const colors = ['#E53935', '#4A148C', '#880E4F', '#1565C0', '#B388FF', '#0277BD', '#004D40', '#827717', '#5D4037'];
+var colorIndex = 0;
+
 // init map
 var southWest = L.latLng(30, 10),
     northEast = L.latLng(80, 200),
@@ -140,7 +143,8 @@ function fetchTraffic(link, tile, zoom)
             e =>
             ({
               coordinates: e.properties.HotspotMetaData.RenderedGeometry.coordinates,
-              speed: e.properties.description
+              speed: e.properties.description,
+              id: `${tile.x}|${tile.y}|${e.properties.HotspotMetaData.id}`
             })
           );
 
@@ -156,7 +160,9 @@ function fetchTraffic(link, tile, zoom)
         var poly;
         for (var i = 0; i < features.length; i++)
         {
-          poly = L.polygon( transformCoords(features[i].coordinates, yCoef, xCoef, tLat, tLng).map(e => e[0]) );
+          poly = L.polygon( transformCoords(features[i].coordinates, yCoef, xCoef, tLat, tLng).map(e => e[0]),
+            {color: colors[colorIndex]} );
+          colorIndex = (++colorIndex) % colors.length;
           (function(val){
             poly.on(
               'mouseover',
@@ -165,7 +171,7 @@ function fetchTraffic(link, tile, zoom)
                 console.log(val);
               }
             );
-          })(features[i].speed);
+          })(features[i].id + ' ' + features[i].speed);
           poly.addTo(Map);
         }
 
