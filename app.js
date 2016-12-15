@@ -39,5 +39,8 @@ app.use(function(err, req, res, next) {
   res.json({message: 'server error'});
 });
 
+// start watching traffic
+require('./lib/traffic-watcher').startWatching();
+
 
 module.exports = app;

@@ -35,7 +35,7 @@ function xphi(tile, zoom)
   return Math.PI / 2 - 2 * Math.atan( 1 / Math.exp( mercatorY(tile, zoom) / Rn ) );
 }
 
-export
+module.exports.latitude = latitude;
 function latitude(tile, zoom)
 {
   let xp = xphi(tile, zoom);
@@ -50,7 +50,7 @@ function latitude(tile, zoom)
   return out * 180 / Math.PI;
 }
 
-export
+module.exports.longitude = longitude;
 function longitude(tile, zoom)
 {
   return mercatorX(tile, zoom) * 180 / Math.PI / Rn;
@@ -60,7 +60,7 @@ function longitude(tile, zoom)
 /**
  * find yandex tile numbers
  */
-export
+module.exports.findYaTile = findYaTile;
 function findYaTile({lat, lng}, zoom)
 {
   var x = Math.floor( (lng * Rn * Math.PI / 180 + b) / equator * worldSize(zoom) );
@@ -122,3 +122,22 @@ function findYaTile({lat, lng}, zoom)
 // var zoom = 16;
 
 //   console.log( findTile(lat, lng, zoom));
+
+
+function extractTrafficPolygons({x, y}, body) // :{ coordinates: [int. int] [] [], speed: int } []
+{
+  var temp = JSON.parse(body).data.features;
+  var features =
+    // remove accidents
+    (temp.length > 0 && temp[0].type === 'FeatureCollection' && temp[0].features ? temp[0].features : temp)
+    .map(
+      e =>
+      ({
+        coordinates: e.properties.HotspotMetaData.RenderedGeometry.coordinates,
+        speed: e.properties.description
+      })
+    );
+
+  return features;
+}
+module.exports.extractTrafficPolygons = extractTrafficPolygons;

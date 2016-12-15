@@ -2,8 +2,8 @@
 
 require('./app.less');
 
-import { getOsmTile } from './tile';
-import { findYaTile, longitude, latitude } from './ya';
+import { getOsmTile } from '../common/tile';
+import { findYaTile, longitude, latitude } from '../common/ya';
 
 import * as request from 'superagent';
 
